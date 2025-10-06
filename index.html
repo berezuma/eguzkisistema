@@ -58,7 +58,8 @@
         <div class="flex h-screen">
             <!-- Ezkerreko zutabea (nabigazioa) -->
             <aside id="sidebar" class="absolute md:relative top-0 left-0 h-full w-64 bg-gray-800 p-4 flex flex-col z-40 shadow-lg transform -translate-x-full md:translate-x-0">
-                <h2 class="text-xl font-bold text-center mb-4 text-blue-300">Eguzki-sistema</h2>
+                <h2 class="text-xl font-bold text-center mb-1 text-blue-300">Eguzki-sistema</h2>
+                <p class="text-center text-xs text-gray-400 mb-4">labur.eus/eguzki-sistema</p>
                 <div id="sidebar-list" class="flex-grow space-y-2 overflow-y-auto pr-2">
                     <!-- Zerrenda hemen sortuko da JavaScript-ekin -->
                 </div>
@@ -78,10 +79,26 @@
                 <div id="container"></div>
                 <div id="labels-container"></div>
                 
+                <!-- Partekatu botoia -->
+                <button id="share-btn" onclick="shareProject()" title="Partekatu" class="absolute top-4 right-4 z-20 bg-gray-800/80 p-2 rounded-full backdrop-blur-sm hover:bg-gray-700 transition-colors">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
+                </button>
+                
                 <!-- Informazio panela -->
-                <div id="info-panel" class="fixed md:absolute bottom-[-100vh] md:top-5 right-0 md:right-[-400px] w-full md:w-[350px] h-auto max-h-[75vh] md:max-h-[calc(100vh-40px)] bg-gray-900/80 backdrop-blur-sm text-white p-6 rounded-t-lg md:rounded-l-lg transition-all duration-500 ease-in-out z-30 border-t-2 md:border-t-0 md:border border-gray-700">
-                    <span class="absolute top-2 right-3 cursor-pointer text-2xl text-gray-400 hover:text-white" onclick="toggleInfoPanel(false)">&times;</span>
-                    <div id="info-content" class="overflow-y-auto max-h-[calc(75vh-48px)] md:max-h-full">
+                <div id="info-panel" class="fixed md:absolute 
+                    top-1/2 left-1/2 md:top-5 md:left-auto
+                    md:right-[-400px]
+                    w-11/12 max-w-lg md:w-[350px] 
+                    h-auto max-h-[85vh] md:max-h-[calc(100vh-40px)] 
+                    bg-gray-800 md:bg-gray-900/80 md:backdrop-blur-sm text-white 
+                    p-6 rounded-lg md:rounded-l-lg md:rounded-r-none
+                    transition-all duration-300 ease-in-out z-30 
+                    border border-gray-700
+                    opacity-0 scale-95 pointer-events-none
+                    -translate-x-1/2 -translate-y-1/2 md:translate-x-0 md:translate-y-0
+                    ">
+                    <span class="absolute top-2 right-3 cursor-pointer text-3xl text-gray-400 hover:text-white" onclick="toggleInfoPanel(false)">&times;</span>
+                    <div id="info-content" class="overflow-y-auto max-h-[calc(85vh-48px)] md:max-h-full">
                         <h2 id="planet-name" class="text-2xl font-bold mb-4 text-blue-300"></h2>
                         <img id="planet-image" src="" alt="Irudia" class="w-full h-48 object-cover rounded-lg mb-4">
                         <p id="planet-description" class="text-gray-300 mb-4 text-sm"></p>
@@ -99,15 +116,22 @@
                 </div>
 
                 <!-- Kontrol botoiak -->
-                <div class="absolute bottom-5 left-1/2 -translate-x-1/2 flex flex-wrap justify-center gap-2 z-10">
+                <div class="absolute bottom-5 left-0 right-0 px-2 flex justify-center gap-2 z-10">
                     <button id="pause-btn" onclick="togglePause()" class="bg-slate-800/70 text-white px-3 py-2 text-sm rounded-lg shadow-lg hover:bg-slate-700 transition-colors border border-slate-600">Pausatu</button>
-                    <button id="reset-view-btn" onclick="resetView()" class="bg-slate-800/70 text-white px-3 py-2 text-sm rounded-lg shadow-lg hover:bg-slate-700 transition-colors border border-slate-600">Ikuspegi Orokorra</button>
-                    <button id="toggle-labels-btn" onclick="toggleLabels()" class="bg-slate-800/70 text-white px-3 py-2 text-sm rounded-lg shadow-lg hover:bg-slate-700 transition-colors border border-slate-600">Ezkutatu Etiketak</button>
+                    <button id="reset-view-btn" onclick="resetView()" class="bg-slate-800/70 text-white px-3 py-2 text-sm rounded-lg shadow-lg hover:bg-slate-700 transition-colors border border-slate-600">Ikuspegi orokorra</button>
+                    <button id="toggle-labels-btn" onclick="toggleLabels()" class="bg-slate-800/70 text-white px-3 py-2 text-sm rounded-lg shadow-lg hover:bg-slate-700 transition-colors border border-slate-600">etiketak</button>
                 </div>
             </main>
         </div>
         <!-- Atzeko geruza iluna menua irekitzean -->
         <div id="overlay" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden" onclick="toggleMenu(false)"></div>
+        <!-- Atzeko geruza iluna info-panel-erako (mugikorrean) -->
+        <div id="info-overlay" class="fixed inset-0 bg-black/60 z-20 hidden md:hidden" onclick="toggleInfoPanel(false)"></div>
+    </div>
+    
+    <!-- Jakinarazpena -->
+    <div id="notification" class="fixed bottom-5 right-5 bg-green-600 text-white py-2 px-4 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 z-50">
+        Esteka arbelean kopiatu da!
     </div>
 
     <script>
@@ -217,7 +241,7 @@
         function toggleLabels() {
             labelsVisible = !labelsVisible;
             document.getElementById('labels-container').style.display = labelsVisible ? 'block' : 'none';
-            document.getElementById('toggle-labels-btn').textContent = labelsVisible ? 'Ezkutatu Etiketak' : 'Erakutsi Etiketak';
+            document.getElementById('toggle-labels-btn').textContent = labelsVisible ? 'Etiketak' : 'Etiketak';
         }
 
         function createSolarSystem() {
@@ -400,18 +424,68 @@
         
         function toggleInfoPanel(show) {
              const panel = document.getElementById('info-panel');
+             const infoOverlay = document.getElementById('info-overlay');
              const isMobile = window.innerWidth < 768;
 
              if (show) {
-                if (isMobile) panel.style.bottom = '0';
-                else panel.style.right = '20px';
+                if (isMobile) {
+                    infoOverlay.classList.remove('hidden');
+                    panel.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+                } else {
+                    panel.style.right = '20px';
+                }
              } else {
-                if (isMobile) panel.style.bottom = '-100vh';
-                else panel.style.right = '-400px';
+                if (isMobile) {
+                    infoOverlay.classList.add('hidden');
+                    panel.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+                } else {
+                    panel.style.right = '-400px';
+                }
                 
                 document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
                 selectedObject = null;
              }
+        }
+
+        async function shareProject() {
+            const shareData = {
+                title: 'Eguzki Sistemaren Simulazioa',
+                text: 'Begiratu Eguzki-sistemaren 3D simulazio interaktibo hau!',
+                url: window.location.href
+            };
+
+            const copyToClipboard = () => {
+                const textArea = document.createElement("textarea");
+                textArea.value = window.location.href;
+                textArea.style.position = "fixed";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    const successful = document.execCommand('copy');
+                    if (successful) {
+                        const notification = document.getElementById('notification');
+                        notification.classList.remove('opacity-0');
+                        setTimeout(() => {
+                            notification.classList.add('opacity-0');
+                        }, 2000);
+                    }
+                } catch (err) {
+                    console.error('Ezin izan da esteka kopiatu: ', err);
+                }
+                document.body.removeChild(textArea);
+            };
+
+            if (navigator.share) {
+                try {
+                    await navigator.share(shareData);
+                } catch (err) {
+                    console.log("Partekatu funtzioak huts egin du, arbelean kopiatzen...", err);
+                    copyToClipboard();
+                }
+            } else {
+                copyToClipboard();
+            }
         }
 
         init();
