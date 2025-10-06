@@ -45,6 +45,9 @@
         #sidebar {
             transition: transform 0.3s ease-in-out;
         }
+        #info-panel {
+            transition: right 0.4s ease-in-out, opacity 0.3s ease-in-out;
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-white">
@@ -92,7 +95,7 @@
                     h-auto max-h-[85vh] md:max-h-[calc(100vh-40px)] 
                     bg-gray-800 md:bg-gray-900/80 md:backdrop-blur-sm text-white 
                     p-6 rounded-lg md:rounded-l-lg md:rounded-r-none
-                    transition-opacity duration-300 ease-in-out z-[60]
+                    z-[60]
                     border border-gray-700
                     opacity-0 pointer-events-none
                     -translate-x-1/2 -translate-y-1/2 md:translate-x-0 md:translate-y-0
@@ -415,7 +418,9 @@
                     const clickedObject = intersects[0].object;
                     selectObjectByName(clickedObject.name);
                 } else {
-                    toggleInfoPanel(false);
+                    if (selectedObject) {
+                        toggleInfoPanel(false);
+                    }
                 }
             }
 
@@ -441,30 +446,39 @@
                 }
             }
             
+            // --- FUNTZIO ZUZENDUA ---
             function toggleInfoPanel(show) {
-                 const panel = document.getElementById('info-panel');
-                 const infoOverlay = document.getElementById('info-overlay');
-                 const isMobile = window.innerWidth < 768;
+                const panel = document.getElementById('info-panel');
+                const infoOverlay = document.getElementById('info-overlay');
+                const isMobile = window.innerWidth < 768;
 
-                 if (show) {
+                if (show) {
+                    // Erakutsi panela, ikusgai eta klikagarri bihurtuz
+                    panel.classList.remove('opacity-0', 'pointer-events-none');
+                    
                     if (isMobile) {
                         infoOverlay.classList.remove('hidden');
-                        panel.classList.remove('opacity-0', 'pointer-events-none');
                     } else {
+                        // Ordenagailuan, eskuinetik sartu
                         panel.style.right = '20px';
                     }
-                 } else {
+                } else {
+                    // Ezkutatu panela, ikusezin eta ez-klikagarri bihurtuz
+                    panel.classList.add('opacity-0', 'pointer-events-none');
+                    
                     if (isMobile) {
                         infoOverlay.classList.add('hidden');
-                        panel.classList.add('opacity-0', 'pointer-events-none');
                     } else {
+                        // Ordenagailuan, eskuinetik atera
                         panel.style.right = '-400px';
                     }
                     
+                    // Garbitu hautapena
                     document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
                     selectedObject = null;
-                 }
+                }
             }
+
 
             async function shareProject() {
                 const shareData = {
@@ -512,6 +526,7 @@
     </script>
 </body>
 </html>
+
 
 
 
