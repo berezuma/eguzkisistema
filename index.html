@@ -132,7 +132,7 @@
                     <button id="reset-view-btn" class="bg-slate-800/70 text-white px-3 py-2 text-sm rounded-lg shadow-lg hover:bg-slate-700 transition-colors border border-slate-600 whitespace-nowrap">Ikuspegi Orokorra</button>
                     <div class="flex items-center space-x-2 bg-slate-800/70 px-3 py-1 rounded-lg border border-slate-600">
                         <span class="text-sm">Etiketak</span>
-                        <label for="toggle-labels-checkbox" class="relative inline-flex items-center cursor-pointer">
+                        <label id="toggle-labels-label" for="toggle-labels-checkbox" class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="toggle-labels-checkbox" class="sr-only peer" checked>
                             <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-focus:ring-2 peer-focus:ring-blue-500 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                         </label>
@@ -204,14 +204,22 @@
                 window.addEventListener('resize', onWindowResize, false);
                 container.addEventListener('click', onContainerClick, false);
                 document.getElementById('menu-btn').addEventListener('click', () => toggleMenu(!isMenuOpen));
-                document.getElementById('toggle-labels-checkbox').addEventListener('change', (event) => {
-                    labelsVisible = event.target.checked;
+                
+                document.getElementById('close-info-btn').addEventListener('click', () => toggleInfoPanel(false));
+                
+                // Beheko botoientzako gertaerak
+                document.getElementById('share-btn').addEventListener('pointerdown', shareProject);
+                document.getElementById('pause-btn').addEventListener('pointerdown', togglePause);
+                document.getElementById('reset-view-btn').addEventListener('pointerdown', resetView);
+                
+                // Etiketen slider-erako gertaera
+                document.getElementById('toggle-labels-label').addEventListener('pointerdown', () => {
+                    const checkbox = document.getElementById('toggle-labels-checkbox');
+                    checkbox.checked = !checkbox.checked;
+                    labelsVisible = checkbox.checked;
                     document.getElementById('labels-container').style.display = labelsVisible ? 'block' : 'none';
                 });
-                document.getElementById('close-info-btn').addEventListener('click', () => toggleInfoPanel(false));
-                document.getElementById('share-btn').addEventListener('click', shareProject);
-                document.getElementById('pause-btn').addEventListener('click', togglePause);
-                document.getElementById('reset-view-btn').addEventListener('click', resetView);
+
                 document.getElementById('overlay').addEventListener('click', () => toggleMenu(false));
                 document.getElementById('info-overlay').addEventListener('click', () => toggleInfoPanel(false));
             }
@@ -534,6 +542,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
