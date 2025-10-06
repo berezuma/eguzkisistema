@@ -46,7 +46,7 @@
             transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
         }
         #info-panel {
-            transition: right 0.4s ease-in-out, opacity 0.3s ease-in-out;
+            transition: right 0.4s ease-in-out, opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
         }
     </style>
 </head>
@@ -233,12 +233,8 @@
             }
             
             function selectObjectByName(name) {
-                const sidebar = document.getElementById('sidebar');
                 if (window.innerWidth < 768) {
                     toggleMenu(false);
-                } else {
-                    // Pantaila handietan, ezkutatu ezkerreko zutabea
-                    sidebar.classList.add('md:hidden');
                 }
 
                 const object = planets[name];
@@ -247,7 +243,9 @@
                     if (object.name !== 'Eguzkia') {
                         followedObject = object;
                     } else {
-                        resetView();
+                        // Eguzkia hautatzean, ez egin zoom-a, mantendu ikuspegi orokorra
+                        followedObject = null; 
+                        controls.target.set(0, 0, 0); 
                     }
                     updateInfoPanel(name);
                 }
@@ -270,7 +268,6 @@
                 followedObject = null; 
                 controls.target.set(0, 0, 0); 
                 camera.position.set(0, 100, 250);
-                // Itxi informazio panela (honek zutabea berrerakutsiko du)
                 toggleInfoPanel(false);
             }
             
@@ -457,7 +454,6 @@
             function toggleInfoPanel(show) {
                 const panel = document.getElementById('info-panel');
                 const infoOverlay = document.getElementById('info-overlay');
-                const sidebar = document.getElementById('sidebar');
                 const isMobile = window.innerWidth < 768;
 
                 if (show) {
@@ -473,8 +469,6 @@
                         infoOverlay.classList.add('hidden');
                     } else {
                         panel.style.right = '-400px';
-                        // Berrerakutsi zutabea pantaila handietan
-                        sidebar.classList.remove('md:hidden');
                     }
                     
                     document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
@@ -529,6 +523,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
