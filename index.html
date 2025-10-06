@@ -59,7 +59,7 @@
             <!-- Ezkerreko zutabea (nabigazioa) -->
             <aside id="sidebar" class="absolute md:relative top-0 left-0 h-full w-64 bg-gray-800 p-4 flex flex-col z-40 shadow-lg transform -translate-x-full md:translate-x-0">
                 <h2 class="text-xl font-bold text-center mb-1 text-blue-300">Eguzki-sistema</h2>
-                <p class="text-center text-xs text-gray-400 mb-4">labur.eus/eguzki-sistema</p>
+                <p class="text-center text-xs text-gray-400 mb-4">labur.eus/eguzki</p>
                 <div id="sidebar-list" class="flex-grow space-y-2 overflow-y-auto pr-2">
                     <!-- Zerrenda hemen sortuko da JavaScript-ekin -->
                 </div>
@@ -92,9 +92,9 @@
                     h-auto max-h-[85vh] md:max-h-[calc(100vh-40px)] 
                     bg-gray-800 md:bg-gray-900/80 md:backdrop-blur-sm text-white 
                     p-6 rounded-lg md:rounded-l-lg md:rounded-r-none
-                    transition-all duration-300 ease-in-out z-30 
+                    transition-opacity duration-300 ease-in-out z-30 
                     border border-gray-700
-                    opacity-0 scale-95 pointer-events-none
+                    opacity-0 pointer-events-none
                     -translate-x-1/2 -translate-y-1/2 md:translate-x-0 md:translate-y-0
                     ">
                     <span class="absolute top-2 right-3 cursor-pointer text-3xl text-gray-400 hover:text-white" onclick="toggleInfoPanel(false)">&times;</span>
@@ -116,10 +116,19 @@
                 </div>
 
                 <!-- Kontrol botoiak -->
-                <div class="absolute bottom-5 left-0 right-0 px-2 flex justify-center gap-2 z-10">
-                    <button id="pause-btn" onclick="togglePause()" class="bg-slate-800/70 text-white px-3 py-2 text-sm rounded-lg shadow-lg hover:bg-slate-700 transition-colors border border-slate-600">Pausatu</button>
+                <div class="absolute bottom-5 left-1/2 -translate-x-1/2 flex justify-center items-center gap-4 z-20">
+                    <button id="pause-btn" onclick="togglePause()" class="bg-slate-800/70 text-white p-2 rounded-lg shadow-lg hover:bg-slate-700 transition-colors border border-slate-600">
+                        <svg id="pause-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                        <svg id="play-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                    </button>
                     <button id="reset-view-btn" onclick="resetView()" class="bg-slate-800/70 text-white px-3 py-2 text-sm rounded-lg shadow-lg hover:bg-slate-700 transition-colors border border-slate-600">Ikuspegi orokorra</button>
-                    <button id="toggle-labels-btn" onclick="toggleLabels()" class="bg-slate-800/70 text-white px-3 py-2 text-sm rounded-lg shadow-lg hover:bg-slate-700 transition-colors border border-slate-600">etiketak</button>
+                    <div class="flex items-center space-x-2 bg-slate-800/70 px-3 py-1 rounded-lg border border-slate-600">
+                        <span class="text-sm">Etiketak</span>
+                        <label for="toggle-labels-checkbox" class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="toggle-labels-checkbox" class="sr-only peer" checked>
+                            <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-focus:ring-2 peer-focus:ring-blue-500 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                    </div>
                 </div>
             </main>
         </div>
@@ -185,6 +194,10 @@
             window.addEventListener('resize', onWindowResize, false);
             container.addEventListener('click', onContainerClick, false);
             document.getElementById('menu-btn').addEventListener('click', () => toggleMenu(!isMenuOpen));
+            document.getElementById('toggle-labels-checkbox').addEventListener('change', (event) => {
+                labelsVisible = event.target.checked;
+                document.getElementById('labels-container').style.display = labelsVisible ? 'block' : 'none';
+            });
         }
         
         function toggleMenu(show) {
@@ -230,7 +243,18 @@
             }
         }
         
-        function togglePause() { isPaused = !isPaused; document.getElementById('pause-btn').textContent = isPaused ? 'Jarraitu' : 'Pausatu'; }
+        function togglePause() { 
+            isPaused = !isPaused;
+            const pauseIcon = document.getElementById('pause-icon');
+            const playIcon = document.getElementById('play-icon');
+            if (isPaused) {
+                pauseIcon.classList.add('hidden');
+                playIcon.classList.remove('hidden');
+            } else {
+                pauseIcon.classList.remove('hidden');
+                playIcon.classList.add('hidden');
+            }
+        }
         
         function resetView() { 
             followedObject = null; 
@@ -238,12 +262,6 @@
             camera.position.set(0, 100, 250);
         }
         
-        function toggleLabels() {
-            labelsVisible = !labelsVisible;
-            document.getElementById('labels-container').style.display = labelsVisible ? 'block' : 'none';
-            document.getElementById('toggle-labels-btn').textContent = labelsVisible ? 'Etiketak' : 'Etiketak';
-        }
-
         function createSolarSystem() {
             const sunGeometry = new THREE.SphereGeometry(12, 64, 64);
             const sunMaterial = new THREE.MeshStandardMaterial({ 
@@ -430,14 +448,14 @@
              if (show) {
                 if (isMobile) {
                     infoOverlay.classList.remove('hidden');
-                    panel.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+                    panel.classList.remove('opacity-0', 'pointer-events-none');
                 } else {
                     panel.style.right = '20px';
                 }
              } else {
                 if (isMobile) {
                     infoOverlay.classList.add('hidden');
-                    panel.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+                    panel.classList.add('opacity-0', 'pointer-events-none');
                 } else {
                     panel.style.right = '-400px';
                 }
@@ -494,5 +512,9 @@
 
 </body>
 </html>
+
+
+
+
 
 
