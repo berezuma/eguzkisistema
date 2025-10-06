@@ -32,8 +32,6 @@ Nola erabili
 - Repositorioa klonatu edo fitxategia deskargatu.
 - Ireki eguzki_sistema.html fitxategia zure web arakatzaile gogokoenean.
 
-Hasi esploratzen!
-
 Lizentzia
 - Proiektu hau Creative Commons Aitortu-PartekatuBerdin 4.0 Nazioartekoa (CC-BY-SA 4.0) lizentziapean argitaratzen da. Horrek esan nahi du:
 - Partekatu: Lana kopiatu eta birbanatu dezakezu edozein bitarteko edo formatutan.
