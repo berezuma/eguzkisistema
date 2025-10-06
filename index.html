@@ -116,7 +116,7 @@
                 </div>
 
                 <!-- Kontrol botoiak -->
-                <div class="absolute bottom-5 inset-x-4 flex justify-center items-center gap-3 z-20">
+                <div class="absolute bottom-8 inset-x-4 flex justify-center items-center gap-3 z-20">
                     <button id="pause-btn" onclick="togglePause()" class="bg-slate-800/70 text-white px-2 py-2 rounded-lg shadow-lg hover:bg-slate-700 transition-colors border border-slate-600">
                         <svg id="pause-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
                         <svg id="play-icon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
@@ -142,7 +142,7 @@
     <div id="notification" class="fixed bottom-5 right-5 bg-green-600 text-white py-2 px-4 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 z-50">
         Esteka arbelean kopiatu da!
     </div>
-
+    
     <script>
         window.addEventListener('DOMContentLoaded', () => {
             const planetData = {
@@ -223,15 +223,15 @@
                     button.className = 'sidebar-item w-full text-left p-3 rounded-md hover:bg-gray-700';
                     button.onclick = () => {
                         selectObjectByName(item.name);
-                        if (window.innerWidth < 768) { // md breakpoint
-                            toggleMenu(false);
-                        }
                     };
                     sidebarList.appendChild(button);
                 });
             }
             
             function selectObjectByName(name) {
+                if (window.innerWidth < 768) {
+                    toggleMenu(false);
+                }
                 const object = planets[name];
                 if (object) {
                     selectedObject = object;
@@ -510,11 +510,8 @@
             animate();
         });
     </script>
-
 </body>
 </html>
-
-
 
 
 
