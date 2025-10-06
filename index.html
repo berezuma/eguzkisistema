@@ -8,10 +8,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: fixed;
+        }
         body {
             font-family: 'Inter', sans-serif;
             margin: 0;
-            overflow: hidden;
         }
         #container {
             position: absolute;
@@ -52,7 +57,7 @@
 </head>
 <body class="bg-gray-900 text-white">
 
-    <div class="relative h-screen w-screen">
+    <div class="fixed inset-0 w-full h-full">
         <!-- Menu botoia mugikorretarako -->
         <button id="menu-btn" class="md:hidden fixed top-4 left-4 z-50 bg-gray-800/80 p-2 rounded-md backdrop-blur-sm">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
@@ -83,7 +88,7 @@
                 <div id="labels-container"></div>
                 
                 <!-- Partekatu botoia -->
-                <button id="share-btn" onclick="shareProject()" title="Partekatu" class="absolute top-4 right-4 z-20 bg-gray-800/80 p-2 rounded-full backdrop-blur-sm hover:bg-gray-700 transition-colors">
+                <button id="share-btn" title="Partekatu" class="absolute top-4 right-4 z-20 bg-gray-800/80 p-2 rounded-full backdrop-blur-sm hover:bg-gray-700 transition-colors">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
                 </button>
                 
@@ -120,11 +125,11 @@
 
                 <!-- Kontrol botoiak -->
                 <div class="absolute bottom-16 md:bottom-8 inset-x-4 flex justify-center items-center gap-3 z-20">
-                    <button id="pause-btn" onclick="togglePause()" class="bg-slate-800/70 text-white px-2 py-2 rounded-lg shadow-lg hover:bg-slate-700 transition-colors border border-slate-600">
+                    <button id="pause-btn" class="bg-slate-800/70 text-white px-2 py-2 rounded-lg shadow-lg hover:bg-slate-700 transition-colors border border-slate-600">
                         <svg id="pause-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
                         <svg id="play-icon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
                     </button>
-                    <button id="reset-view-btn" onclick="resetView()" class="bg-slate-800/70 text-white px-3 py-2 text-sm rounded-lg shadow-lg hover:bg-slate-700 transition-colors border border-slate-600 whitespace-nowrap">Ikuspegi Orokorra</button>
+                    <button id="reset-view-btn" class="bg-slate-800/70 text-white px-3 py-2 text-sm rounded-lg shadow-lg hover:bg-slate-700 transition-colors border border-slate-600 whitespace-nowrap">Ikuspegi Orokorra</button>
                     <div class="flex items-center space-x-2 bg-slate-800/70 px-3 py-1 rounded-lg border border-slate-600">
                         <span class="text-sm">Etiketak</span>
                         <label for="toggle-labels-checkbox" class="relative inline-flex items-center cursor-pointer">
@@ -136,9 +141,9 @@
             </main>
         </div>
         <!-- Atzeko geruza iluna menua irekitzean -->
-        <div id="overlay" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden" onclick="toggleMenu(false)"></div>
+        <div id="overlay" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden"></div>
         <!-- Atzeko geruza iluna info-panel-erako (mugikorrean) -->
-        <div id="info-overlay" class="fixed inset-0 bg-black/60 z-50 hidden md:hidden" onclick="toggleInfoPanel(false)"></div>
+        <div id="info-overlay" class="fixed inset-0 bg-black/60 z-50 hidden md:hidden"></div>
     </div>
     
     <!-- Jakinarazpena -->
@@ -195,6 +200,7 @@
                 createSolarSystem();
                 createSidebar();
 
+                // Gertaerak (Event Listeners)
                 window.addEventListener('resize', onWindowResize, false);
                 container.addEventListener('click', onContainerClick, false);
                 document.getElementById('menu-btn').addEventListener('click', () => toggleMenu(!isMenuOpen));
@@ -203,6 +209,11 @@
                     document.getElementById('labels-container').style.display = labelsVisible ? 'block' : 'none';
                 });
                 document.getElementById('close-info-btn').addEventListener('click', () => toggleInfoPanel(false));
+                document.getElementById('share-btn').addEventListener('click', shareProject);
+                document.getElementById('pause-btn').addEventListener('click', togglePause);
+                document.getElementById('reset-view-btn').addEventListener('click', resetView);
+                document.getElementById('overlay').addEventListener('click', () => toggleMenu(false));
+                document.getElementById('info-overlay').addEventListener('click', () => toggleInfoPanel(false));
             }
             
             function toggleMenu(show) {
@@ -523,6 +534,7 @@
     </script>
 </body>
 </html>
+
 
 
 
