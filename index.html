@@ -92,7 +92,7 @@
                     h-auto max-h-[85vh] md:max-h-[calc(100vh-40px)] 
                     bg-gray-800 md:bg-gray-900/80 md:backdrop-blur-sm text-white 
                     p-6 rounded-lg md:rounded-l-lg md:rounded-r-none
-                    transition-opacity duration-300 ease-in-out z-30 
+                    transition-opacity duration-300 ease-in-out z-[60]
                     border border-gray-700
                     opacity-0 pointer-events-none
                     -translate-x-1/2 -translate-y-1/2 md:translate-x-0 md:translate-y-0
@@ -116,8 +116,8 @@
                 </div>
 
                 <!-- Kontrol botoiak -->
-                <div class="absolute bottom-4 inset-x-2 flex justify-center items-center gap-2 z-20">
-                    <button id="pause-btn" onclick="togglePause()" class="bg-slate-800/70 text-white p-2 rounded-lg shadow-lg hover:bg-slate-700 transition-colors border border-slate-600">
+                <div class="absolute bottom-5 inset-x-4 flex justify-center items-center gap-3 z-20">
+                    <button id="pause-btn" onclick="togglePause()" class="bg-slate-800/70 text-white px-2 py-2 rounded-lg shadow-lg hover:bg-slate-700 transition-colors border border-slate-600">
                         <svg id="pause-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
                         <svg id="play-icon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
                     </button>
@@ -135,7 +135,7 @@
         <!-- Atzeko geruza iluna menua irekitzean -->
         <div id="overlay" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden" onclick="toggleMenu(false)"></div>
         <!-- Atzeko geruza iluna info-panel-erako (mugikorrean) -->
-        <div id="info-overlay" class="fixed inset-0 bg-black/60 z-20 hidden md:hidden" onclick="toggleInfoPanel(false)"></div>
+        <div id="info-overlay" class="fixed inset-0 bg-black/60 z-50 hidden md:hidden" onclick="toggleInfoPanel(false)"></div>
     </div>
     
     <!-- Jakinarazpena -->
@@ -144,374 +144,377 @@
     </div>
 
     <script>
-        const planetData = {
-            'Eguzkia': { name: 'Eguzkia', diameter: '1.392.700 km', mass: '1,989 × 10^30 kg', gravity: '274 m/s²', rotation: '25-35 egun', orbitPeriod: 'N/A', distance: '0', temperature: '5.505 °C (azalean)', moons: 'N/A', description: 'Eguzki-sistemaren erdiko izarra. Sistema honetako objektu handiena da, masaren %99,86 hartzen baitu.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg/640px-The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg' },
-            'Merkurio': { name: 'Merkurio', diameter: '4.879 km', mass: '3,285 × 10^23 kg', gravity: '3,7 m/s²', rotation: '58,6 egun', orbitPeriod: '88 egun', distance: '57,9 milioi km', temperature: '-173°C / 427°C (min/max)', moons: '0', description: 'Eguzkitik hurbilen dagoen planeta eta sistemako txikiena.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Mercury_in_true_color.jpg/640px-Mercury_in_true_color.jpg' },
-            'Artizarra (Venus)': { name: 'Artizarra (Venus)', diameter: '12.104 km', mass: '4,867 × 10^24 kg', gravity: '8,87 m/s²', rotation: '243 egun (erretrogradoa)', orbitPeriod: '225 egun', distance: '108,2 milioi km', temperature: '462 °C', moons: '0', description: 'Lurraren "planeta bikia" deitua, tamaina eta konposizio antzekoak dituelako.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Venus-real_color.jpg/640px-Venus-real_color.jpg' },
-            'Lurra': { name: 'Lurra', diameter: '12.742 km', mass: '5,972 × 10^24 kg', gravity: '9,8 m/s²', rotation: '23,9 ordu', orbitPeriod: '365,25 egun', distance: '149,6 milioi km', temperature: '15 °C', moons: '1 (Ilargia)', description: 'Gure etxea eta ezagutzen dugun bizia duen planeta bakarra.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/The_Earth_seen_from_Apollo_17.jpg/640px-The_Earth_seen_from_Apollo_17.jpg' },
-            'Marte': { name: 'Marte', diameter: '6.779 km', mass: '6,39 × 10^23 kg', gravity: '3,71 m/s²', rotation: '24,6 ordu', orbitPeriod: '687 egun', distance: '227,9 milioi km', temperature: '-65 °C', moons: '2 (Fobos eta Deimos)', description: '"Planeta Gorria" bezala ezaguna, bere gainazaleko burdin oxidoagatik.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/OSIRIS_Mars_true_color.jpg/640px-OSIRIS_Mars_true_color.jpg' },
-            'Jupiter': { name: 'Jupiter', diameter: '139.820 km', mass: '1,898 × 10^27 kg', gravity: '24,79 m/s²', rotation: '9,9 ordu', orbitPeriod: '11,9 urte', distance: '778,5 milioi km', temperature: '-145 °C (hodei-goian)', moons: '95+', description: 'Eguzki-sistemako planetarik handiena. Bere ezaugarri nagusia Orban Gorri Handia da.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Jupiter_and_its_shrunken_Great_Red_Spot.jpg/640px-Jupiter_and_its_shrunken_Great_Red_Spot.jpg' },
-            'Saturno': { name: 'Saturno', diameter: '116.460 km', mass: '5,683 × 10^26 kg', gravity: '10,44 m/s²', rotation: '10,7 ordu', orbitPeriod: '29,5 urte', distance: '1.434 milioi km', temperature: '-178 °C (hodei-goian)', moons: '146+', description: 'Bere eraztun sistemagatik ezaguna den gas erraldoia.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Saturn_during_Equinox.jpg/640px-Saturn_during_Equinox.jpg' },
-            'Urano': { name: 'Urano', diameter: '50.724 km', mass: '8,681 × 10^25 kg', gravity: '8,69 m/s²', rotation: '17,2 ordu (erretrogradoa)', orbitPeriod: '84 urte', distance: '2.871 milioi km', temperature: '-224 °C (hodei-goian)', moons: '27', description: 'Izotzezko erraldoi bat da, eta bere ardatza ia etzanda duena.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Uranus2.jpg/640px-Uranus2.jpg' },
-            'Neptuno': { name: 'Neptuno', diameter: '49.244 km', mass: '1,024 × 10^26 kg', gravity: '11,15 m/s²', rotation: '16,1 ordu', orbitPeriod: '164,8 urte', distance: '4.495 milioi km', temperature: '-214 °C (hodei-goian)', moons: '14', description: 'Eguzkitik urrunen dagoen planeta.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Neptune_-_Voyager_2_%2829347980845%29_flatten_crop.jpg/640px-Neptune_-_Voyager_2_%2829347980845%29_flatten_crop.jpg' }
-        };
+        window.addEventListener('DOMContentLoaded', () => {
+            const planetData = {
+                'Eguzkia': { name: 'Eguzkia', diameter: '1.392.700 km', mass: '1,989 × 10^30 kg', gravity: '274 m/s²', rotation: '25-35 egun', orbitPeriod: 'N/A', distance: '0', temperature: '5.505 °C (azalean)', moons: 'N/A', description: 'Eguzki-sistemaren erdiko izarra. Sistema honetako objektu handiena da, masaren %99,86 hartzen baitu.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg/640px-The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg' },
+                'Merkurio': { name: 'Merkurio', diameter: '4.879 km', mass: '3,285 × 10^23 kg', gravity: '3,7 m/s²', rotation: '58,6 egun', orbitPeriod: '88 egun', distance: '57,9 milioi km', temperature: '-173°C / 427°C (min/max)', moons: '0', description: 'Eguzkitik hurbilen dagoen planeta eta sistemako txikiena.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Mercury_in_true_color.jpg/640px-Mercury_in_true_color.jpg' },
+                'Artizarra (Venus)': { name: 'Artizarra (Venus)', diameter: '12.104 km', mass: '4,867 × 10^24 kg', gravity: '8,87 m/s²', rotation: '243 egun (erretrogradoa)', orbitPeriod: '225 egun', distance: '108,2 milioi km', temperature: '462 °C', moons: '0', description: 'Lurraren "planeta bikia" deitua, tamaina eta konposizio antzekoak dituelako.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Venus-real_color.jpg/640px-Venus-real_color.jpg' },
+                'Lurra': { name: 'Lurra', diameter: '12.742 km', mass: '5,972 × 10^24 kg', gravity: '9,8 m/s²', rotation: '23,9 ordu', orbitPeriod: '365,25 egun', distance: '149,6 milioi km', temperature: '15 °C', moons: '1 (Ilargia)', description: 'Gure etxea eta ezagutzen dugun bizia duen planeta bakarra.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/The_Earth_seen_from_Apollo_17.jpg/640px-The_Earth_seen_from_Apollo_17.jpg' },
+                'Marte': { name: 'Marte', diameter: '6.779 km', mass: '6,39 × 10^23 kg', gravity: '3,71 m/s²', rotation: '24,6 ordu', orbitPeriod: '687 egun', distance: '227,9 milioi km', temperature: '-65 °C', moons: '2 (Fobos eta Deimos)', description: '"Planeta Gorria" bezala ezaguna, bere gainazaleko burdin oxidoagatik.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/OSIRIS_Mars_true_color.jpg/640px-OSIRIS_Mars_true_color.jpg' },
+                'Jupiter': { name: 'Jupiter', diameter: '139.820 km', mass: '1,898 × 10^27 kg', gravity: '24,79 m/s²', rotation: '9,9 ordu', orbitPeriod: '11,9 urte', distance: '778,5 milioi km', temperature: '-145 °C (hodei-goian)', moons: '95+', description: 'Eguzki-sistemako planetarik handiena. Bere ezaugarri nagusia Orban Gorri Handia da.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Jupiter_and_its_shrunken_Great_Red_Spot.jpg/640px-Jupiter_and_its_shrunken_Great_Red_Spot.jpg' },
+                'Saturno': { name: 'Saturno', diameter: '116.460 km', mass: '5,683 × 10^26 kg', gravity: '10,44 m/s²', rotation: '10,7 ordu', orbitPeriod: '29,5 urte', distance: '1.434 milioi km', temperature: '-178 °C (hodei-goian)', moons: '146+', description: 'Bere eraztun sistemagatik ezaguna den gas erraldoia.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Saturn_during_Equinox.jpg/640px-Saturn_during_Equinox.jpg' },
+                'Urano': { name: 'Urano', diameter: '50.724 km', mass: '8,681 × 10^25 kg', gravity: '8,69 m/s²', rotation: '17,2 ordu (erretrogradoa)', orbitPeriod: '84 urte', distance: '2.871 milioi km', temperature: '-224 °C (hodei-goian)', moons: '27', description: 'Izotzezko erraldoi bat da, eta bere ardatza ia etzanda duena.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Uranus2.jpg/640px-Uranus2.jpg' },
+                'Neptuno': { name: 'Neptuno', diameter: '49.244 km', mass: '1,024 × 10^26 kg', gravity: '11,15 m/s²', rotation: '16,1 ordu', orbitPeriod: '164,8 urte', distance: '4.495 milioi km', temperature: '-214 °C (hodei-goian)', moons: '14', description: 'Eguzkitik urrunen dagoen planeta.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Neptune_-_Voyager_2_%2829347980845%29_flatten_crop.jpg/640px-Neptune_-_Voyager_2_%2829347980845%29_flatten_crop.jpg' }
+            };
 
-        let scene, camera, renderer, controls;
-        const planets = {}; 
-        let labelsVisible = true;
-        const raycaster = new THREE.Raycaster();
-        const mouse = new THREE.Vector2();
-        let selectedObject = null;
-        let followedObject = null;
-        let targetWorldPosition = new THREE.Vector3();
-        let isPaused = false;
-        let isMenuOpen = false;
+            let scene, camera, renderer, controls;
+            const planets = {}; 
+            let labelsVisible = true;
+            const raycaster = new THREE.Raycaster();
+            const mouse = new THREE.Vector2();
+            let selectedObject = null;
+            let followedObject = null;
+            let targetWorldPosition = new THREE.Vector3();
+            let isPaused = false;
+            let isMenuOpen = false;
 
-        function init() {
-            const container = document.getElementById('container');
-            scene = new THREE.Scene();
-            
-            const textureLoader = new THREE.TextureLoader();
-            const backgroundTexture = textureLoader.load('https://raw.githubusercontent.com/stemkoski/stemkoski.github.com/master/Three.js/images/starfield.jpg');
-            scene.background = backgroundTexture;
+            function init() {
+                const container = document.getElementById('container');
+                scene = new THREE.Scene();
+                
+                const textureLoader = new THREE.TextureLoader();
+                const backgroundTexture = textureLoader.load('https://raw.githubusercontent.com/stemkoski/stemkoski.github.com/master/Three.js/images/starfield.jpg');
+                scene.background = backgroundTexture;
 
-            camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 2000);
-            camera.position.set(0, 50, 150);
-            camera.lookAt(0, 0, 0);
+                camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 2000);
+                camera.position.set(0, 50, 150);
+                camera.lookAt(0, 0, 0);
 
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(container.clientWidth, container.clientHeight);
-            container.appendChild(renderer.domElement);
+                renderer = new THREE.WebGLRenderer({ antialias: true });
+                renderer.setSize(container.clientWidth, container.clientHeight);
+                container.appendChild(renderer.domElement);
 
-            controls = new THREE.OrbitControls(camera, renderer.domElement);
-            controls.enableDamping = true;
-            controls.minDistance = 10;
-            controls.maxDistance = 800;
-            
-            createSolarSystem();
-            createSidebar();
+                controls = new THREE.OrbitControls(camera, renderer.domElement);
+                controls.enableDamping = true;
+                controls.minDistance = 10;
+                controls.maxDistance = 800;
+                
+                createSolarSystem();
+                createSidebar();
 
-            window.addEventListener('resize', onWindowResize, false);
-            container.addEventListener('click', onContainerClick, false);
-            document.getElementById('menu-btn').addEventListener('click', () => toggleMenu(!isMenuOpen));
-            document.getElementById('toggle-labels-checkbox').addEventListener('change', (event) => {
-                labelsVisible = event.target.checked;
-                document.getElementById('labels-container').style.display = labelsVisible ? 'block' : 'none';
-            });
-        }
-        
-        function toggleMenu(show) {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            isMenuOpen = show;
-            if (show) {
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
-            } else {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
+                window.addEventListener('resize', onWindowResize, false);
+                container.addEventListener('click', onContainerClick, false);
+                document.getElementById('menu-btn').addEventListener('click', () => toggleMenu(!isMenuOpen));
+                document.getElementById('toggle-labels-checkbox').addEventListener('change', (event) => {
+                    labelsVisible = event.target.checked;
+                    document.getElementById('labels-container').style.display = labelsVisible ? 'block' : 'none';
+                });
             }
-        }
+            
+            function toggleMenu(show) {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('overlay');
+                isMenuOpen = show;
+                if (show) {
+                    sidebar.classList.remove('-translate-x-full');
+                    overlay.classList.remove('hidden');
+                } else {
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+            }
 
-        function createSidebar() {
-            const sidebarList = document.getElementById('sidebar-list');
-            Object.values(planetData).forEach(item => {
-                const button = document.createElement('button');
-                button.textContent = item.name;
-                button.dataset.name = item.name;
-                button.className = 'sidebar-item w-full text-left p-3 rounded-md hover:bg-gray-700';
-                button.onclick = () => {
-                    selectObjectByName(item.name);
-                    if (window.innerWidth < 768) { // md breakpoint
-                        toggleMenu(false);
+            function createSidebar() {
+                const sidebarList = document.getElementById('sidebar-list');
+                Object.values(planetData).forEach(item => {
+                    const button = document.createElement('button');
+                    button.textContent = item.name;
+                    button.dataset.name = item.name;
+                    button.className = 'sidebar-item w-full text-left p-3 rounded-md hover:bg-gray-700';
+                    button.onclick = () => {
+                        selectObjectByName(item.name);
+                        if (window.innerWidth < 768) { // md breakpoint
+                            toggleMenu(false);
+                        }
+                    };
+                    sidebarList.appendChild(button);
+                });
+            }
+            
+            function selectObjectByName(name) {
+                const object = planets[name];
+                if (object) {
+                    selectedObject = object;
+                    if (object.name !== 'Eguzkia') {
+                        followedObject = object;
+                    } else {
+                        resetView();
                     }
+                    updateInfoPanel(name);
+                }
+            }
+            
+            function togglePause() { 
+                isPaused = !isPaused;
+                const pauseIcon = document.getElementById('pause-icon');
+                const playIcon = document.getElementById('play-icon');
+                if (isPaused) {
+                    pauseIcon.classList.add('hidden');
+                    playIcon.classList.remove('hidden');
+                } else {
+                    pauseIcon.classList.remove('hidden');
+                    playIcon.classList.add('hidden');
+                }
+            }
+            
+            function resetView() { 
+                followedObject = null; 
+                controls.target.set(0, 0, 0); 
+                camera.position.set(0, 100, 250);
+            }
+            
+            function createSolarSystem() {
+                const sunGeometry = new THREE.SphereGeometry(12, 64, 64);
+                const sunMaterial = new THREE.MeshStandardMaterial({ 
+                    emissive: 0xfdb813,
+                    emissiveIntensity: 2,
+                    map: createTexture(0xfdb813, 0xffa500)
+                 });
+                const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+                sun.name = 'Eguzkia';
+                scene.add(sun);
+                planets['Eguzkia'] = sun;
+                addLabel(sun);
+
+                const pointLight = new THREE.PointLight(0xffffff, 3, 3000);
+                sun.add(pointLight);
+
+                Object.keys(planetData).forEach(name => {
+                    if (name === 'Eguzkia') return;
+                    let size, distance, speed, color, hasMoon, hasRings;
+                    switch (name) {
+                        case 'Merkurio': size = 1.2; distance = 30; speed = 0.04; color = 0xaaaaaa; break;
+                        case 'Artizarra (Venus)': size = 2.2; distance = 45; speed = 0.02; color = 0xd8a36a; break;
+                        case 'Lurra': size = 2.5; distance = 62; speed = 0.015; color = 0x4e6d8c; hasMoon = true; break;
+                        case 'Marte': size = 1.5; distance = 80; speed = 0.012; color = 0xc1440e; break;
+                        case 'Jupiter': size = 7; distance = 120; speed = 0.005; color = 0xc8a487; break;
+                        case 'Saturno': size = 6; distance = 160; speed = 0.003; color = 0xe3d8b8; hasRings = true; break;
+                        case 'Urano': size = 4; distance = 200; speed = 0.002; color = 0xafdbf5; break;
+                        case 'Neptuno': size = 3.8; distance = 240; speed = 0.0015; color = 0x3f54ba; break;
+                    }
+                    if (size) {
+                        createPlanet(name, size, distance, speed, color, hasMoon, hasRings);
+                    }
+                });
+            }
+
+            function createPlanet(name, size, distance, speed, color, hasMoon = false, hasRings = false) {
+                const planetGeometry = new THREE.SphereGeometry(size, 32, 32);
+                const planetMaterial = new THREE.MeshStandardMaterial({ color: color, map: createTexture(color, darkenColor(color, 0.3)) });
+                const planet = new THREE.Mesh(planetGeometry, planetMaterial);
+                planet.name = name;
+                
+                const pivot = new THREE.Object3D();
+                scene.add(pivot);
+                pivot.add(planet);
+                
+                planet.position.x = distance;
+                
+                planet.userData = { speed: speed, distance: distance, pivot: pivot };
+                planets[name] = planet;
+                addLabel(planet);
+
+                const orbitGeometry = new THREE.RingGeometry(distance - 0.2, distance + 0.2, 128);
+                const orbitMaterial = new THREE.MeshBasicMaterial({ color: 0xcccccc, side: THREE.DoubleSide, opacity: 0.5, transparent: true });
+                const orbit = new THREE.Mesh(orbitGeometry, orbitMaterial);
+                orbit.rotation.x = -Math.PI / 2;
+                scene.add(orbit);
+                
+                if(hasMoon) {
+                    const moon = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), new THREE.MeshStandardMaterial({ color: 0x888888 }));
+                    moon.name = "Ilargia";
+                    planet.add(moon);
+                    moon.position.x = size + 2;
+                    moon.userData = { pivot: planet };
+                }
+
+                if(hasRings) {
+                    const ring = new THREE.Mesh(new THREE.RingGeometry(size + 2, size + 5, 64), new THREE.MeshBasicMaterial({ color: 0xaaa_aaa, side: THREE.DoubleSide, opacity: 0.6, transparent: true }));
+                    ring.rotation.x = Math.PI * 0.4;
+                    planet.add(ring);
+                }
+            }
+            
+            function createTexture(color1, color2) {
+                const canvas = document.createElement('canvas');
+                canvas.width = 128; canvas.height = 128;
+                const context = canvas.getContext('2d');
+                const gradient = context.createRadialGradient(64, 64, 0, 64, 64, 64);
+                gradient.addColorStop(0, new THREE.Color(color1).getStyle());
+                gradient.addColorStop(1, new THREE.Color(color2).getStyle());
+                context.fillStyle = gradient;
+                context.fillRect(0, 0, 128, 128);
+                return new THREE.CanvasTexture(canvas);
+            }
+
+            function darkenColor(color, percent) {
+                const c = new THREE.Color(color);
+                c.lerp(new THREE.Color(0x000000), percent);
+                return c;
+            }
+
+            function addLabel(object) {
+                const labelDiv = document.createElement('div');
+                labelDiv.className = 'label';
+                labelDiv.textContent = object.name;
+                document.getElementById('labels-container').appendChild(labelDiv);
+                object.userData.label = labelDiv;
+            }
+
+            function animate() {
+                requestAnimationFrame(animate);
+
+                if (!isPaused) {
+                    Object.values(planets).forEach(p => { 
+                        if (p.userData.pivot) p.userData.pivot.rotation.y += p.userData.speed * 0.1;
+                        p.rotation.y += 0.005; 
+                    });
+                }
+
+                Object.values(planets).forEach(p => {
+                    if (!p.userData.label) return;
+                    const vector = new THREE.Vector3();
+                    p.getWorldPosition(vector);
+                    vector.project(camera);
+                    
+                    const x = (vector.x * 0.5 + 0.5) * renderer.domElement.clientWidth;
+                    const y = (vector.y * -0.5 + 0.5) * renderer.domElement.clientHeight;
+
+                    p.userData.label.style.transform = `translate(-50%, -150%) translate(${x}px, ${y}px)`;
+                    p.userData.label.style.display = vector.z > 1 ? 'none' : 'block';
+                });
+
+                if (followedObject) {
+                    followedObject.getWorldPosition(targetWorldPosition);
+                    controls.target.copy(targetWorldPosition);
+                }
+
+                controls.update();
+                renderer.render(scene, camera);
+            }
+
+            function onWindowResize() {
+                const container = document.getElementById('container');
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            }
+            
+            function onContainerClick(event) {
+                if (isMenuOpen && window.innerWidth < 768) return;
+
+                const container = document.getElementById('container');
+                const rect = container.getBoundingClientRect();
+                mouse.x = ((event.clientX - rect.left) / container.clientWidth) * 2 - 1;
+                mouse.y = -((event.clientY - rect.top) / container.clientHeight) * 2 + 1;
+
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObjects(Object.values(planets));
+
+                if (intersects.length > 0) {
+                    const clickedObject = intersects[0].object;
+                    selectObjectByName(clickedObject.name);
+                } else {
+                    toggleInfoPanel(false);
+                }
+            }
+
+            function updateInfoPanel(name) {
+                const data = planetData[name];
+                if (data) { 
+                    document.getElementById('planet-name').innerText = data.name;
+                    document.getElementById('planet-image').src = data.image;
+                    document.getElementById('planet-description').innerText = data.description;
+                    document.getElementById('planet-diameter').innerText = data.diameter;
+                    document.getElementById('planet-mass').innerText = data.mass;
+                    document.getElementById('planet-gravity').innerText = data.gravity;
+                    document.getElementById('planet-rotation').innerText = data.rotation;
+                    document.getElementById('planet-orbit-period').innerText = data.orbitPeriod;
+                    document.getElementById('planet-distance').innerText = data.distance;
+                    document.getElementById('planet-temperature').innerText = data.temperature;
+                    document.getElementById('planet-moons').innerText = data.moons;
+                    toggleInfoPanel(true);
+
+                    document.querySelectorAll('.sidebar-item').forEach(item => {
+                        item.classList.toggle('active', item.dataset.name === data.name);
+                    });
+                }
+            }
+            
+            function toggleInfoPanel(show) {
+                 const panel = document.getElementById('info-panel');
+                 const infoOverlay = document.getElementById('info-overlay');
+                 const isMobile = window.innerWidth < 768;
+
+                 if (show) {
+                    if (isMobile) {
+                        infoOverlay.classList.remove('hidden');
+                        panel.classList.remove('opacity-0', 'pointer-events-none');
+                    } else {
+                        panel.style.right = '20px';
+                    }
+                 } else {
+                    if (isMobile) {
+                        infoOverlay.classList.add('hidden');
+                        panel.classList.add('opacity-0', 'pointer-events-none');
+                    } else {
+                        panel.style.right = '-400px';
+                    }
+                    
+                    document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+                    selectedObject = null;
+                 }
+            }
+
+            async function shareProject() {
+                const shareData = {
+                    title: 'Eguzki Sistemaren Simulazioa',
+                    text: 'Begiratu Eguzki-sistemaren 3D simulazio interaktibo hau!',
+                    url: window.location.href
                 };
-                sidebarList.appendChild(button);
-            });
-        }
-        
-        function selectObjectByName(name) {
-            const object = planets[name];
-            if (object) {
-                selectedObject = object;
-                if (object.name !== 'Eguzkia') {
-                    followedObject = object;
-                } else {
-                    resetView();
-                }
-                updateInfoPanel(name);
-            }
-        }
-        
-        function togglePause() { 
-            isPaused = !isPaused;
-            const pauseIcon = document.getElementById('pause-icon');
-            const playIcon = document.getElementById('play-icon');
-            if (isPaused) {
-                pauseIcon.classList.add('hidden');
-                playIcon.classList.remove('hidden');
-            } else {
-                pauseIcon.classList.remove('hidden');
-                playIcon.classList.add('hidden');
-            }
-        }
-        
-        function resetView() { 
-            followedObject = null; 
-            controls.target.set(0, 0, 0); 
-            camera.position.set(0, 100, 250);
-        }
-        
-        function createSolarSystem() {
-            const sunGeometry = new THREE.SphereGeometry(12, 64, 64);
-            const sunMaterial = new THREE.MeshStandardMaterial({ 
-                emissive: 0xfdb813,
-                emissiveIntensity: 2,
-                map: createTexture(0xfdb813, 0xffa500)
-             });
-            const sun = new THREE.Mesh(sunGeometry, sunMaterial);
-            sun.name = 'Eguzkia';
-            scene.add(sun);
-            planets['Eguzkia'] = sun;
-            addLabel(sun);
 
-            const pointLight = new THREE.PointLight(0xffffff, 3, 3000);
-            sun.add(pointLight);
-
-            Object.keys(planetData).forEach(name => {
-                if (name === 'Eguzkia') return;
-                let size, distance, speed, color, hasMoon, hasRings;
-                switch (name) {
-                    case 'Merkurio': size = 1.2; distance = 30; speed = 0.04; color = 0xaaaaaa; break;
-                    case 'Artizarra (Venus)': size = 2.2; distance = 45; speed = 0.02; color = 0xd8a36a; break;
-                    case 'Lurra': size = 2.5; distance = 62; speed = 0.015; color = 0x4e6d8c; hasMoon = true; break;
-                    case 'Marte': size = 1.5; distance = 80; speed = 0.012; color = 0xc1440e; break;
-                    case 'Jupiter': size = 7; distance = 120; speed = 0.005; color = 0xc8a487; break;
-                    case 'Saturno': size = 6; distance = 160; speed = 0.003; color = 0xe3d8b8; hasRings = true; break;
-                    case 'Urano': size = 4; distance = 200; speed = 0.002; color = 0xafdbf5; break;
-                    case 'Neptuno': size = 3.8; distance = 240; speed = 0.0015; color = 0x3f54ba; break;
-                }
-                if (size) {
-                    createPlanet(name, size, distance, speed, color, hasMoon, hasRings);
-                }
-            });
-        }
-
-        function createPlanet(name, size, distance, speed, color, hasMoon = false, hasRings = false) {
-            const planetGeometry = new THREE.SphereGeometry(size, 32, 32);
-            const planetMaterial = new THREE.MeshStandardMaterial({ color: color, map: createTexture(color, darkenColor(color, 0.3)) });
-            const planet = new THREE.Mesh(planetGeometry, planetMaterial);
-            planet.name = name;
-            
-            const pivot = new THREE.Object3D();
-            scene.add(pivot);
-            pivot.add(planet);
-            
-            planet.position.x = distance;
-            
-            planet.userData = { speed: speed, distance: distance, pivot: pivot };
-            planets[name] = planet;
-            addLabel(planet);
-
-            const orbitGeometry = new THREE.RingGeometry(distance - 0.2, distance + 0.2, 128);
-            const orbitMaterial = new THREE.MeshBasicMaterial({ color: 0xcccccc, side: THREE.DoubleSide, opacity: 0.5, transparent: true });
-            const orbit = new THREE.Mesh(orbitGeometry, orbitMaterial);
-            orbit.rotation.x = -Math.PI / 2;
-            scene.add(orbit);
-            
-            if(hasMoon) {
-                const moon = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), new THREE.MeshStandardMaterial({ color: 0x888888 }));
-                moon.name = "Ilargia";
-                planet.add(moon);
-                moon.position.x = size + 2;
-                moon.userData = { pivot: planet };
-            }
-
-            if(hasRings) {
-                const ring = new THREE.Mesh(new THREE.RingGeometry(size + 2, size + 5, 64), new THREE.MeshBasicMaterial({ color: 0xaaa_aaa, side: THREE.DoubleSide, opacity: 0.6, transparent: true }));
-                ring.rotation.x = Math.PI * 0.4;
-                planet.add(ring);
-            }
-        }
-        
-        function createTexture(color1, color2) {
-            const canvas = document.createElement('canvas');
-            canvas.width = 128; canvas.height = 128;
-            const context = canvas.getContext('2d');
-            const gradient = context.createRadialGradient(64, 64, 0, 64, 64, 64);
-            gradient.addColorStop(0, new THREE.Color(color1).getStyle());
-            gradient.addColorStop(1, new THREE.Color(color2).getStyle());
-            context.fillStyle = gradient;
-            context.fillRect(0, 0, 128, 128);
-            return new THREE.CanvasTexture(canvas);
-        }
-
-        function darkenColor(color, percent) {
-            const c = new THREE.Color(color);
-            c.lerp(new THREE.Color(0x000000), percent);
-            return c;
-        }
-
-        function addLabel(object) {
-            const labelDiv = document.createElement('div');
-            labelDiv.className = 'label';
-            labelDiv.textContent = object.name;
-            document.getElementById('labels-container').appendChild(labelDiv);
-            object.userData.label = labelDiv;
-        }
-
-        function animate() {
-            requestAnimationFrame(animate);
-
-            if (!isPaused) {
-                Object.values(planets).forEach(p => { 
-                    if (p.userData.pivot) p.userData.pivot.rotation.y += p.userData.speed * 0.1;
-                    p.rotation.y += 0.005; 
-                });
-            }
-
-            Object.values(planets).forEach(p => {
-                if (!p.userData.label) return;
-                const vector = new THREE.Vector3();
-                p.getWorldPosition(vector);
-                vector.project(camera);
-                
-                const x = (vector.x * 0.5 + 0.5) * renderer.domElement.clientWidth;
-                const y = (vector.y * -0.5 + 0.5) * renderer.domElement.clientHeight;
-
-                p.userData.label.style.transform = `translate(-50%, -150%) translate(${x}px, ${y}px)`;
-                p.userData.label.style.display = vector.z > 1 ? 'none' : 'block';
-            });
-
-            if (followedObject) {
-                followedObject.getWorldPosition(targetWorldPosition);
-                controls.target.copy(targetWorldPosition);
-            }
-
-            controls.update();
-            renderer.render(scene, camera);
-        }
-
-        function onWindowResize() {
-            const container = document.getElementById('container');
-            camera.aspect = container.clientWidth / container.clientHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(container.clientWidth, container.clientHeight);
-        }
-        
-        function onContainerClick(event) {
-            if (isMenuOpen && window.innerWidth < 768) return;
-
-            const container = document.getElementById('container');
-            const rect = container.getBoundingClientRect();
-            mouse.x = ((event.clientX - rect.left) / container.clientWidth) * 2 - 1;
-            mouse.y = -((event.clientY - rect.top) / container.clientHeight) * 2 + 1;
-
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(Object.values(planets));
-
-            if (intersects.length > 0) {
-                const clickedObject = intersects[0].object;
-                selectObjectByName(clickedObject.name);
-            } else {
-                toggleInfoPanel(false);
-            }
-        }
-
-        function updateInfoPanel(name) {
-            const data = planetData[name];
-            if (data) { 
-                document.getElementById('planet-name').innerText = data.name;
-                document.getElementById('planet-image').src = data.image;
-                document.getElementById('planet-description').innerText = data.description;
-                document.getElementById('planet-diameter').innerText = data.diameter;
-                document.getElementById('planet-mass').innerText = data.mass;
-                document.getElementById('planet-gravity').innerText = data.gravity;
-                document.getElementById('planet-rotation').innerText = data.rotation;
-                document.getElementById('planet-orbit-period').innerText = data.orbitPeriod;
-                document.getElementById('planet-distance').innerText = data.distance;
-                document.getElementById('planet-temperature').innerText = data.temperature;
-                document.getElementById('planet-moons').innerText = data.moons;
-                toggleInfoPanel(true);
-
-                document.querySelectorAll('.sidebar-item').forEach(item => {
-                    item.classList.toggle('active', item.dataset.name === data.name);
-                });
-            }
-        }
-        
-        function toggleInfoPanel(show) {
-             const panel = document.getElementById('info-panel');
-             const infoOverlay = document.getElementById('info-overlay');
-             const isMobile = window.innerWidth < 768;
-
-             if (show) {
-                if (isMobile) {
-                    infoOverlay.classList.remove('hidden');
-                    panel.classList.remove('opacity-0', 'pointer-events-none');
-                } else {
-                    panel.style.right = '20px';
-                }
-             } else {
-                if (isMobile) {
-                    infoOverlay.classList.add('hidden');
-                    panel.classList.add('opacity-0', 'pointer-events-none');
-                } else {
-                    panel.style.right = '-400px';
-                }
-                
-                document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
-                selectedObject = null;
-             }
-        }
-
-        async function shareProject() {
-            const shareData = {
-                title: 'Eguzki Sistemaren Simulazioa',
-                text: 'Begiratu Eguzki-sistemaren 3D simulazio interaktibo hau!',
-                url: window.location.href
-            };
-
-            const copyToClipboard = () => {
-                const textArea = document.createElement("textarea");
-                textArea.value = window.location.href;
-                textArea.style.position = "fixed";
-                document.body.appendChild(textArea);
-                textArea.focus();
-                textArea.select();
-                try {
-                    const successful = document.execCommand('copy');
-                    if (successful) {
-                        const notification = document.getElementById('notification');
-                        notification.classList.remove('opacity-0');
-                        setTimeout(() => {
-                            notification.classList.add('opacity-0');
-                        }, 2000);
+                const copyToClipboard = () => {
+                    const textArea = document.createElement("textarea");
+                    textArea.value = window.location.href;
+                    textArea.style.position = "fixed";
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    try {
+                        const successful = document.execCommand('copy');
+                        if (successful) {
+                            const notification = document.getElementById('notification');
+                            notification.classList.remove('opacity-0');
+                            setTimeout(() => {
+                                notification.classList.add('opacity-0');
+                            }, 2000);
+                        }
+                    } catch (err) {
+                        console.error('Ezin izan da esteka kopiatu: ', err);
                     }
-                } catch (err) {
-                    console.error('Ezin izan da esteka kopiatu: ', err);
-                }
-                document.body.removeChild(textArea);
-            };
+                    document.body.removeChild(textArea);
+                };
 
-            if (navigator.share) {
-                try {
-                    await navigator.share(shareData);
-                } catch (err) {
-                    console.log("Partekatu funtzioak huts egin du, arbelean kopiatzen...", err);
+                if (navigator.share) {
+                    try {
+                        await navigator.share(shareData);
+                    } catch (err) {
+                        console.log("Partekatu funtzioak huts egin du, arbelean kopiatzen...", err);
+                        copyToClipboard();
+                    }
+                } else {
                     copyToClipboard();
                 }
-            } else {
-                copyToClipboard();
             }
-        }
-
-        init();
-        animate();
+            init();
+            animate();
+        });
     </script>
 
 </body>
 </html>
+
+
 
 
 
