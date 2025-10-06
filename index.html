@@ -43,7 +43,7 @@
         }
         /* Sidebar trantsizioa */
         #sidebar {
-            transition: transform 0.3s ease-in-out;
+            transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
         }
         #info-panel {
             transition: right 0.4s ease-in-out, opacity 0.3s ease-in-out;
@@ -119,7 +119,7 @@
                 </div>
 
                 <!-- Kontrol botoiak -->
-                <div class="absolute bottom-8 inset-x-4 flex justify-center items-center gap-3 z-20">
+                <div class="absolute bottom-16 md:bottom-8 inset-x-4 flex justify-center items-center gap-3 z-20">
                     <button id="pause-btn" onclick="togglePause()" class="bg-slate-800/70 text-white px-2 py-2 rounded-lg shadow-lg hover:bg-slate-700 transition-colors border border-slate-600">
                         <svg id="pause-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
                         <svg id="play-icon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
@@ -233,9 +233,14 @@
             }
             
             function selectObjectByName(name) {
+                const sidebar = document.getElementById('sidebar');
                 if (window.innerWidth < 768) {
                     toggleMenu(false);
+                } else {
+                    // Pantaila handietan, ezkutatu ezkerreko zutabea
+                    sidebar.classList.add('md:hidden');
                 }
+
                 const object = planets[name];
                 if (object) {
                     selectedObject = object;
@@ -265,6 +270,8 @@
                 followedObject = null; 
                 controls.target.set(0, 0, 0); 
                 camera.position.set(0, 100, 250);
+                // Itxi informazio panela (honek zutabea berrerakutsiko du)
+                toggleInfoPanel(false);
             }
             
             function createSolarSystem() {
@@ -447,34 +454,29 @@
                 }
             }
             
-            // --- FUNTZIO ZUZENDUA ---
             function toggleInfoPanel(show) {
                 const panel = document.getElementById('info-panel');
                 const infoOverlay = document.getElementById('info-overlay');
+                const sidebar = document.getElementById('sidebar');
                 const isMobile = window.innerWidth < 768;
 
                 if (show) {
-                    // Erakutsi panela, ikusgai eta klikagarri bihurtuz
                     panel.classList.remove('opacity-0', 'pointer-events-none');
-                    
                     if (isMobile) {
                         infoOverlay.classList.remove('hidden');
                     } else {
-                        // Ordenagailuan, eskuinetik sartu
                         panel.style.right = '20px';
                     }
                 } else {
-                    // Ezkutatu panela, ikusezin eta ez-klikagarri bihurtuz
                     panel.classList.add('opacity-0', 'pointer-events-none');
-                    
                     if (isMobile) {
                         infoOverlay.classList.add('hidden');
                     } else {
-                        // Ordenagailuan, eskuinetik atera
                         panel.style.right = '-400px';
+                        // Berrerakutsi zutabea pantaila handietan
+                        sidebar.classList.remove('md:hidden');
                     }
                     
-                    // Garbitu hautapena
                     document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
                     selectedObject = null;
                 }
@@ -527,6 +529,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
