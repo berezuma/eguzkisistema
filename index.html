@@ -67,13 +67,13 @@
             <!-- Ezkerreko zutabea (nabigazioa) -->
             <aside id="sidebar" class="absolute md:relative top-0 left-0 h-full w-64 bg-gray-800 p-4 flex flex-col z-40 shadow-lg transform -translate-x-full md:translate-x-0">
                 <h2 class="text-xl font-bold text-center mb-1 text-blue-300">Eguzki-sistema</h2>
-                <p class="text-center text-xs text-gray-400 mb-2">labur.eus/eguzki-sistema</p>
+                <p class="text-center text-xs text-gray-400 mb-2">labur.eus/eguzki</p>
                 <div id="sidebar-list" class="flex-grow space-y-1 overflow-y-auto pr-2">
                     <!-- Zerrenda hemen sortuko da JavaScript-ekin -->
                 </div>
                 <div class="mt-auto pt-2 border-t border-gray-700">
                     <a href="https://eu.wikipedia.org/wiki/Txikipedia:Eguzki-sistema" target="_blank" rel="noopener noreferrer" class="block w-full text-center p-2 rounded-md bg-gray-700 hover:bg-blue-600 transition-colors text-sm">
-                        Gehiago ikasi Txikipedian
+                        Gehiago jakin Txikipedian
                     </a>
                     <div class="mt-2 text-center text-xs text-gray-400">
                         <p>Egilea: <a href="https://berezuma.com" target="_blank" rel="noopener noreferrer" class="underline hover:text-white">Beñat Erezuma Arisketa</a></p>
@@ -124,17 +124,17 @@
                 </div>
 
                 <!-- Kontrol botoiak -->
-                <div class="absolute bottom-16 inset-x-4 flex justify-center items-center gap-3 z-20">
-                    <button id="pause-btn" title="Pausatu/Jarraitu" class="bg-slate-800/70 text-white p-2 rounded-lg shadow-lg hover:bg-slate-700 transition-colors border border-slate-600">
-                        <svg id="pause-icon" class="w-6 h-6 pointer-events-none" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
-                        <svg id="play-icon" class="w-6 h-6 hidden pointer-events-none" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                <div class="absolute bottom-16 inset-x-4 flex justify-center items-center gap-4 z-20">
+                    <button id="pause-btn" title="Pausatu/Jarraitu" class="bg-slate-800/70 text-white p-3 rounded-lg shadow-lg hover:bg-slate-700 transition-colors border border-slate-600">
+                        <svg id="pause-icon" class="w-7 h-7 pointer-events-none" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                        <svg id="play-icon" class="w-7 h-7 hidden pointer-events-none" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
                     </button>
-                    <button id="reset-view-btn" title="Ikuspegi Orokorra" class="bg-slate-800/70 text-white p-2 rounded-lg shadow-lg hover:bg-slate-700 transition-colors border border-slate-600">
-                        <svg class="w-6 h-6 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 10V4h6 M10 10L4 4 M14 4h6v6 M14 10l6-6 M4 14v6h6 M10 14l-6 6 M14 20h6v-6 M14 14l6 6"></path></svg>
+                    <button id="reset-view-btn" title="Ikuspegi Orokorra" class="bg-slate-800/70 text-white p-3 rounded-lg shadow-lg hover:bg-slate-700 transition-colors border border-slate-600">
+                        <svg class="w-7 h-7 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 10V4h6 M10 10L4 4 M14 4h6v6 M14 10l6-6 M4 14v6h6 M10 14l-6 6 M14 20h6v-6 M14 14l6 6"></path></svg>
                     </button>
-                    <button id="toggle-labels-btn" title="Erakutsi/Ezkutatu Etiketak" class="bg-slate-800/70 text-white p-2 rounded-lg shadow-lg hover:bg-slate-700 transition-colors border border-slate-600">
-                        <svg id="labels-on-icon" class="w-6 h-6 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                        <svg id="labels-off-icon" class="w-6 h-6 hidden pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
+                    <button id="toggle-labels-btn" title="Erakutsi/Ezkutatu Etiketak" class="bg-slate-800/70 text-white p-3 rounded-lg shadow-lg hover:bg-slate-700 transition-colors border border-slate-600">
+                        <svg id="labels-on-icon" class="w-7 h-7 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                        <svg id="labels-off-icon" class="w-7 h-7 hidden pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
                     </button>
                 </div>
             </main>
@@ -160,8 +160,8 @@
                 'Marte': { name: 'Marte', diameter: '6.779 km', mass: '6,39 × 10^23 kg', gravity: '3,71 m/s²', rotation: '24,6 ordu', orbitPeriod: '687 egun', distance: '227,9 milioi km', temperature: '-65 °C', moons: '2 (Fobos eta Deimos)', description: '"Planeta Gorria" bezala ezaguna, bere gainazaleko burdin oxidoagatik.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/OSIRIS_Mars_true_color.jpg/640px-OSIRIS_Mars_true_color.jpg' },
                 'Jupiter': { name: 'Jupiter', diameter: '139.820 km', mass: '1,898 × 10^27 kg', gravity: '24,79 m/s²', rotation: '9,9 ordu', orbitPeriod: '11,9 urte', distance: '778,5 milioi km', temperature: '-145 °C (hodei-goian)', moons: '95+', description: 'Eguzki-sistemako planetarik handiena. Bere ezaugarri nagusia Orban Gorri Handia da.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Jupiter_and_its_shrunken_Great_Red_Spot.jpg/640px-Jupiter_and_its_shrunken_Great_Red_Spot.jpg' },
                 'Saturno': { name: 'Saturno', diameter: '116.460 km', mass: '5,683 × 10^26 kg', gravity: '10,44 m/s²', rotation: '10,7 ordu', orbitPeriod: '29,5 urte', distance: '1.434 milioi km', temperature: '-178 °C (hodei-goian)', moons: '146+', description: 'Bere eraztun sistemagatik ezaguna den gas erraldoia.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Saturn_during_Equinox.jpg/640px-Saturn_during_Equinox.jpg' },
-                'Urano': { name: 'Urano', diameter: '50.724 km', mass: '8,681 × 10^25 kg', gravity: '8,69 m/s²', rotation: '17,2 ordu (erretrogradoa)', orbitPeriod: '84 urte', distance: '2.871 milioi km', temperature: '-224 °C (hodei-goian)', moons: '29', description: 'Izotzezko erraldoi bat da, eta bere ardatza ia etzanda duena.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Uranus2.jpg/640px-Uranus2.jpg' },
-                'Neptuno': { name: 'Neptuno', diameter: '49.244 km', mass: '1,024 × 10^26 kg', gravity: '11,15 m/s²', rotation: '16,1 ordu', orbitPeriod: '164,8 urte', distance: '4.495 milioi km', temperature: '-214 °C (hodei-goian)', moons: '16', description: 'Eguzkitik urrunen dagoen planeta.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Neptune_-_Voyager_2_%2829347980845%29_flatten_crop.jpg/640px-Neptune_-_Voyager_2_%2829347980845%29_flatten_crop.jpg' }
+                'Urano': { name: 'Urano', diameter: '50.724 km', mass: '8,681 × 10^25 kg', gravity: '8,69 m/s²', rotation: '17,2 ordu (erretrogradoa)', orbitPeriod: '84 urte', distance: '2.871 milioi km', temperature: '-224 °C (hodei-goian)', moons: '27', description: 'Izotzezko erraldoi bat da, eta bere ardatza ia etzanda duena.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Uranus2.jpg/640px-Uranus2.jpg' },
+                'Neptuno': { name: 'Neptuno', diameter: '49.244 km', mass: '1,024 × 10^26 kg', gravity: '11,15 m/s²', rotation: '16,1 ordu', orbitPeriod: '164,8 urte', distance: '4.495 milioi km', temperature: '-214 °C (hodei-goian)', moons: '14', description: 'Eguzkitik urrunen dagoen planeta.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Neptune_-_Voyager_2_%2829347980845%29_flatten_crop.jpg/640px-Neptune_-_Voyager_2_%2829347980845%29_flatten_crop.jpg' }
             };
 
             let scene, camera, renderer, controls;
@@ -174,6 +174,9 @@
             let targetWorldPosition = new THREE.Vector3();
             let isPaused = false;
             let isMenuOpen = false;
+
+            let pointerDownX = 0;
+            let pointerDownY = 0;
 
             function init() {
                 const container = document.getElementById('container');
@@ -201,7 +204,8 @@
 
                 // Gertaerak (Event Listeners)
                 window.addEventListener('resize', onWindowResize, false);
-                container.addEventListener('click', onContainerClick, false);
+                container.addEventListener('pointerdown', onPointerDown, false);
+                container.addEventListener('pointerup', onPointerUp, false);
                 document.getElementById('menu-btn').addEventListener('click', () => toggleMenu(!isMenuOpen));
                 document.getElementById('close-info-btn').addEventListener('click', () => toggleInfoPanel(false));
                 
@@ -229,6 +233,21 @@
                 document.getElementById('info-overlay').addEventListener('click', () => toggleInfoPanel(false));
             }
             
+            function onPointerDown(event) {
+                pointerDownX = event.clientX;
+                pointerDownY = event.clientY;
+            }
+
+            function onPointerUp(event) {
+                const deltaX = Math.abs(event.clientX - pointerDownX);
+                const deltaY = Math.abs(event.clientY - pointerDownY);
+
+                // If the pointer moved less than a threshold (e.g., 5 pixels), consider it a tap/click
+                if (deltaX < 5 && deltaY < 5) {
+                    onContainerClick(event);
+                }
+            }
+
             function toggleMenu(show) {
                 const sidebar = document.getElementById('sidebar');
                 const overlay = document.getElementById('overlay');
@@ -547,6 +566,13 @@
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
 
 
 
