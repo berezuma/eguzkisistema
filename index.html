@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
     <style>
         html, body {
             width: 100%;
@@ -110,16 +111,26 @@
                         <h2 id="planet-name" class="text-2xl font-bold mb-4 text-blue-300"></h2>
                         <img id="planet-image" src="" alt="Irudia" class="w-full h-48 object-cover rounded-lg mb-4">
                         <p id="planet-description" class="text-gray-300 mb-4 text-sm"></p>
-                        <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
                             <div><strong class="text-blue-400">Diametroa:</strong> <span id="planet-diameter"></span></div>
                             <div><strong class="text-blue-400">Masa:</strong> <span id="planet-mass"></span></div>
                             <div><strong class="text-blue-400">Grabitatea:</strong> <span id="planet-gravity"></span></div>
                             <div><strong class="text-blue-400">Errotazioa:</strong> <span id="planet-rotation"></span></div>
                             <div><strong class="text-blue-400">Translazioa:</strong> <span id="planet-orbit-period"></span></div>
-                            <div><strong class="text-blue-400">Distantzia:</strong> <span id="planet-distance"></span></div>
+                            <div><strong class="text-blue-400">Batez besteko distantzia:</strong> <span id="planet-distance"></span></div>
                             <div><strong class="text-blue-400">Batez besteko tenperatura:</strong> <span id="planet-temperature"></span></div>
                             <div><strong class="text-blue-400">Sateliteak:</strong> <span id="planet-moons"></span></div>
                         </div>
+
+                        <!-- Datu dinamikoen atala -->
+                        <div id="dynamic-info" class="mt-4 pt-4 border-t border-gray-600 hidden">
+                             <h3 class="text-sm font-bold mb-2 text-blue-300/80">DATUAK DENBORA ERREALEAN</h3>
+                             <div class="grid grid-cols-1 gap-2 text-xs">
+                                 <div id="sun-distance-container"><strong class="text-blue-400">Distantzia Eguzkira:</strong> <span id="dynamic-sun-distance" class="font-mono"></span></div>
+                                 <div id="earth-distance-container"><strong class="text-blue-400">Distantzia Lurrera:</strong> <span id="dynamic-earth-distance" class="font-mono"></span></div>
+                             </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -174,6 +185,9 @@
             let targetWorldPosition = new THREE.Vector3();
             let isPaused = false;
             let isMenuOpen = false;
+            let activeTween = null;
+
+            const SIMULATION_TO_REAL_KM_FACTOR = 149.6 / 62; // milioi km / simulazioko unitate
 
             let pointerDownX = 0;
             let pointerDownY = 0;
@@ -242,7 +256,6 @@
                 const deltaX = Math.abs(event.clientX - pointerDownX);
                 const deltaY = Math.abs(event.clientY - pointerDownY);
 
-                // If the pointer moved less than a threshold (e.g., 5 pixels), consider it a tap/click
                 if (deltaX < 5 && deltaY < 5) {
                     onContainerClick(event);
                 }
@@ -279,17 +292,10 @@
                 if (window.innerWidth < 768) {
                     toggleMenu(false);
                 }
-
                 const object = planets[name];
                 if (object) {
                     selectedObject = object;
-                    if (object.name !== 'Eguzkia') {
-                        followedObject = object;
-                    } else {
-                        // Eguzkia hautatzean, ez egin zoom-a, mantendu ikuspegi orokorra
-                        followedObject = null; 
-                        controls.target.set(0, 0, 0); 
-                    }
+                    animateCameraToTarget(object);
                     updateInfoPanel(name);
                 }
             }
@@ -308,26 +314,25 @@
             }
             
             function resetView() { 
-                followedObject = null; 
-                controls.target.set(0, 0, 0); 
-                camera.position.set(0, 100, 250);
+                animateCameraToTarget(planets['Eguzkia']);
                 toggleInfoPanel(false);
             }
             
             function createSolarSystem() {
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+                scene.add(ambientLight);
+
                 const sunGeometry = new THREE.SphereGeometry(12, 64, 64);
-                const sunMaterial = new THREE.MeshStandardMaterial({ 
-                    emissive: 0xfdb813,
-                    emissiveIntensity: 2,
+                const sunMaterial = new THREE.MeshBasicMaterial({ 
                     map: createTexture(0xfdb813, 0xffa500)
-                 });
+                });
                 const sun = new THREE.Mesh(sunGeometry, sunMaterial);
                 sun.name = 'Eguzkia';
                 scene.add(sun);
                 planets['Eguzkia'] = sun;
                 addLabel(sun);
 
-                const pointLight = new THREE.PointLight(0xffffff, 3, 3000);
+                const pointLight = new THREE.PointLight(0xffffff, 1.5, 3000);
                 sun.add(pointLight);
 
                 Object.keys(planetData).forEach(name => {
@@ -412,8 +417,49 @@
                 object.userData.label = labelDiv;
             }
 
+            function animateCameraToTarget(targetObject) {
+                if (activeTween) {
+                    activeTween.stop();
+                }
+                
+                followedObject = null;
+
+                const startPosition = camera.position.clone();
+                const startTarget = controls.target.clone();
+
+                const endTarget = new THREE.Vector3();
+                targetObject.getWorldPosition(endTarget);
+
+                let endPosition;
+                if (targetObject.name === 'Eguzkia') {
+                    endPosition = new THREE.Vector3(0, 100, 250);
+                } else {
+                    const planetSize = targetObject.geometry.parameters.radius;
+                    const sunToPlanet = endTarget.clone().normalize();
+                    const distance = Math.max(planetSize * 4, 20);
+                    endPosition = endTarget.clone().add(sunToPlanet.multiplyScalar(distance));
+                    endPosition.y += planetSize * 1.5;
+                }
+
+                activeTween = new TWEEN.Tween({ pos: startPosition, target: startTarget })
+                    .to({ pos: endPosition, target: endTarget }, 1500)
+                    .easing(TWEEN.Easing.Quadratic.InOut)
+                    .onUpdate((obj) => {
+                        camera.position.copy(obj.pos);
+                        controls.target.copy(obj.target);
+                    })
+                    .onComplete(() => {
+                        if (targetObject.name !== 'Eguzkia') {
+                            followedObject = targetObject;
+                        }
+                        activeTween = null;
+                    })
+                    .start();
+            }
+
             function animate() {
                 requestAnimationFrame(animate);
+                TWEEN.update();
 
                 if (!isPaused) {
                     Object.values(planets).forEach(p => { 
@@ -421,6 +467,27 @@
                         p.rotation.y += 0.005; 
                     });
                 }
+                
+                // Datu dinamikoak eguneratu
+                if (selectedObject && selectedObject.name !== 'Eguzkia') {
+                    const sunPos = new THREE.Vector3(0, 0, 0);
+                    const selectedPos = new THREE.Vector3();
+                    selectedObject.getWorldPosition(selectedPos);
+
+                    const distToSun = selectedPos.distanceTo(sunPos);
+                    document.getElementById('dynamic-sun-distance').innerText = `${(distToSun * SIMULATION_TO_REAL_KM_FACTOR).toFixed(1)} milioi km`;
+
+                    if (selectedObject.name !== 'Lurra') {
+                        const earth = planets['Lurra'];
+                        if (earth) {
+                            const earthPos = new THREE.Vector3();
+                            earth.getWorldPosition(earthPos);
+                            const distToEarth = selectedPos.distanceTo(earthPos);
+                            document.getElementById('dynamic-earth-distance').innerText = `${(distToEarth * SIMULATION_TO_REAL_KM_FACTOR).toFixed(1)} milioi km`;
+                        }
+                    }
+                }
+
 
                 Object.values(planets).forEach(p => {
                     if (!p.userData.label) return;
@@ -435,7 +502,7 @@
                     p.userData.label.style.display = vector.z > 1 ? 'none' : 'block';
                 });
 
-                if (followedObject) {
+                if (followedObject && !activeTween) {
                     followedObject.getWorldPosition(targetWorldPosition);
                     controls.target.copy(targetWorldPosition);
                 }
@@ -486,6 +553,22 @@
                     document.getElementById('planet-distance').innerText = data.distance;
                     document.getElementById('planet-temperature').innerText = data.temperature;
                     document.getElementById('planet-moons').innerText = data.moons;
+                    
+                    // Kudeatu atal dinamikoaren ikusgarritasuna
+                    const dynamicInfo = document.getElementById('dynamic-info');
+                    const earthDistanceContainer = document.getElementById('earth-distance-container');
+
+                    if (name === 'Eguzkia') {
+                        dynamicInfo.classList.add('hidden');
+                    } else {
+                        dynamicInfo.classList.remove('hidden');
+                        if (name === 'Lurra') {
+                            earthDistanceContainer.classList.add('hidden');
+                        } else {
+                            earthDistanceContainer.classList.remove('hidden');
+                        }
+                    }
+
                     toggleInfoPanel(true);
 
                     document.querySelectorAll('.sidebar-item').forEach(item => {
@@ -566,6 +649,7 @@
     </script>
 </body>
 </html>
+
 
 
 
